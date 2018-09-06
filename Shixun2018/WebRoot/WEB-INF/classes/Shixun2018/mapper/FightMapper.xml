@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Shixun2018.dao.FightDao">
+	<insert id="addFight" parameterType="Shixun2018.entity.Fight"> 
+	insert into fight(player1,player2,song1,song2,des,state,ticket1,ticket2)
+	values(#{player1},#{player2},#{song1},#{song2},#{des},#{state},0,0)
+	</insert>
+	<select id="fightList" resultType="Shixun2018.entity.Fight">
+	SELECT * FROM fight
+	</select>
+	<select id="Isduplicate" parameterType="Shixun2018.entity.VoteRecord" resultType="Shixun2018.entity.VoteRecord">
+	SELECT * FROM voterecord where userid=#{userid} and fight=#{fight}
+	</select>
+	<update id="updataState1" parameterType="int">
+	UPDATE fight set state = 1 where id=#{id}
+	</update>
+	<update id="updataState2" parameterType="int">
+	UPDATE fight set state = 0 where id=#{id}
+	</update>
+	<update id="updataticket1" parameterType="int">
+	UPDATE fight set ticket1 = ticket1+1 where id=#{id}
+	</update>
+	<update id="updataticket2" parameterType="int">
+	UPDATE fight set ticket2 = ticket2+1 where id=#{id}
+	</update>
+	<select id="queryFight" resultType="Shixun2018.entity.QueryFight">
+	select p.*,p2.id as id2,p2.pic as pic2,p2.name as name2,p2.age as age2,p2.sex as sex2,p2.hobby as hobby2,f.id as fid,f.song1,f.song2,f.des,f.ticket1,f.ticket2,f.state from player p2,player p,fight f where f.state=1 and p.id=f.player1 and p2.id=f.player2
+	</select>
+	<select id="queryUserByVote" parameterType="Shixun2018.entity.VoteRecord" resultType="Shixun2018.entity.User">
+	select * from user where id in( select userid from voterecord where fight=#{fight} and player=#{player})
+	</select>
+	<insert id="addRecord" parameterType="Shixun2018.entity.VoteRecord"> 
+	insert into voterecord(userid,player,fight)
+	values(#{userid},#{player},#{fight})
+	</insert>
+</mapper>
